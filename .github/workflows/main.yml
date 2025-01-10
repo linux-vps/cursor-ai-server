@@ -2,38 +2,42 @@ name: Automated Commit
 
 on:
   push:
-    branches: [master] # Trigger trên nhánh master
+    branches: [master]
   schedule:
-    - cron: '*/10 * * * *' # Chạy mỗi 10 phút
-  workflow_dispatch: # Trigger thủ công từ GitHub UI
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
 
 permissions:
-  contents: write # Cấp quyền ghi cho repository
+  contents: write
 
 jobs:
   update_commit:
-    runs-on: ubuntu-latest # Sử dụng runner Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3 # Dùng action checkout
+        uses: actions/checkout@v3
         with:
-          persist-credentials: true # Giữ lại thông tin đăng nhập GitHub
-          fetch-depth: 0 # Lấy toàn bộ lịch sử commit
-
-      - name: Update Timestamp File
-        run: |
-          current_time=$(date '+%Y-%m-%d %H:%M:%S')
-          echo "Updated on $current_time" > TIMESTAMP.txt
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Setup Git Configuration
         run: |
           git config user.email "dinhnhatminh.minhkhanh@gmail.com"
           git config user.name "linux-vps"
 
-      - name: Pull Latest Changes
+      - name: Ensure Clean Working State
         run: |
-          git pull origin master --rebase || echo "No updates to pull."
+          git reset --hard HEAD # Bỏ các thay đổi chưa được commit
+          git clean -fd          # Xóa các file không được theo dõi
+
+      - name: Pull Latest Changes
+        run: git pull origin master --rebase || echo "No updates to pull."
+
+      - name: Update Timestamp File
+        run: |
+          current_time=$(date '+%Y-%m-%d %H:%M:%S')
+          echo "Updated on $current_time" > TIMESTAMP.txt
 
       - name: Prepare Commit
         run: |
@@ -44,5 +48,4 @@ jobs:
           git commit -m "$random_msg - $current_time" || echo "No changes to commit."
 
       - name: Push Changes
-        run: |
-          git push origin master || echo "Push failed. Retry after manual review."
+        run: git push origin master || echo "Push failed. Retry after manual review."
