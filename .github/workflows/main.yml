@@ -38,7 +38,11 @@ jobs:
         run: |
           export TZ=Asia/Ho_Chi_Minh
           current_time=$(date '+%Y-%m-%d %H:%M:%S')
-          echo "\nUpdated on $current_time" >> README.md
+          if grep -q "Last Updated:" README.md; then
+            sed -i "s|Last Updated:.*|Last Updated: $current_time|" README.md
+          else
+            echo -e "\n## Last Updated\nLast Updated: $current_time" >> README.md
+          fi
 
       - name: Prepare Commit
         run: |
