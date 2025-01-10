@@ -34,19 +34,21 @@ jobs:
       - name: Pull Latest Changes
         run: git pull origin main --rebase || echo "No updates to pull."
 
-      - name: Update Timestamp File
+      - name: Update README.md with Timestamp
         run: |
+          export TZ=Asia/Ho_Chi_Minh
           current_time=$(date '+%Y-%m-%d %H:%M:%S')
-          echo "Updated on $current_time" > TIMESTAMP.txt
+          echo "\nUpdated on $current_time" >> README.md
 
       - name: Prepare Commit
         run: |
+          export TZ=Asia/Ho_Chi_Minh
           commit_messages=("Update: ⏰" "Refresh: 🔄" "Renew: 🌟" "Revise: 📝" "Amend: 🛠" "Adjust: 🔧" "Change: 📈" "Modify: 🖊" "Transform: 🌀" "Revamp: 🌈")
           random_msg=${commit_messages[$RANDOM % ${#commit_messages[@]}]}
-          current_time=$(date '+%Y-%m-%d %H:%M:%S') # Cập nhật timestamp tại đây
-          full_message="$random_msg - $current_time" # Gắn timestamp vào thông báo commit
+          current_time=$(date '+%Y-%m-%d %H:%M:%S')
+          full_message="$random_msg - $current_time"
 
-          git add TIMESTAMP.txt
+          git add README.md
           git commit -m "$full_message" || echo "No changes to commit."
 
       - name: Push Changes
