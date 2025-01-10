@@ -2,7 +2,7 @@ name: Automated Commit
 
 on:
   push:
-    branches: [master]
+    branches: [main] # Đảm bảo nhánh chính là main
   schedule:
     - cron: '*/10 * * * *'
   workflow_dispatch:
@@ -28,11 +28,11 @@ jobs:
 
       - name: Ensure Clean Working State
         run: |
-          git reset --hard HEAD # Bỏ các thay đổi chưa được commit
-          git clean -fd          # Xóa các file không được theo dõi
+          git reset --hard HEAD
+          git clean -fd
 
       - name: Pull Latest Changes
-        run: git pull origin master --rebase || echo "No updates to pull."
+        run: git pull origin main --rebase || echo "No updates to pull."
 
       - name: Update Timestamp File
         run: |
@@ -48,4 +48,4 @@ jobs:
           git commit -m "$random_msg - $current_time" || echo "No changes to commit."
 
       - name: Push Changes
-        run: git push origin master || echo "Push failed. Retry after manual review."
+        run: git push origin main || echo "Push failed. Retry after manual review."
