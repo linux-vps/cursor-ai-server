@@ -2,7 +2,7 @@ name: Automated Commit
 
 on:
   push:
-    branches: [main] # Đảm bảo nhánh chính là main
+    branches: [main]
   schedule:
     - cron: '*/10 * * * *'
   workflow_dispatch:
@@ -43,9 +43,11 @@ jobs:
         run: |
           commit_messages=("Update: ⏰" "Refresh: 🔄" "Renew: 🌟" "Revise: 📝" "Amend: 🛠" "Adjust: 🔧" "Change: 📈" "Modify: 🖊" "Transform: 🌀" "Revamp: 🌈")
           random_msg=${commit_messages[$RANDOM % ${#commit_messages[@]}]}
+          current_time=$(date '+%Y-%m-%d %H:%M:%S') # Cập nhật timestamp tại đây
+          full_message="$random_msg - $current_time" # Gắn timestamp vào thông báo commit
 
           git add TIMESTAMP.txt
-          git commit -m "$random_msg - $current_time" || echo "No changes to commit."
+          git commit -m "$full_message" || echo "No changes to commit."
 
       - name: Push Changes
         run: git push origin main || echo "Push failed. Retry after manual review."
