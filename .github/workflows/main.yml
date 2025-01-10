@@ -36,16 +36,13 @@ jobs:
           git config user.email "dinhnhatminh.minhkhanh@gmail.com"
           git config user.name "linux-vps"
 
-      - name: Prepare Commits
+      - name: Prepare Commit
         run: |
           commit_messages=("Update: ⏰" "Refresh: 🔄" "Renew: 🌟" "Revise: 📝" "Amend: 🛠" "Adjust: 🔧" "Change: 📈" "Modify: 🖊" "Transform: 🌀" "Revamp: 🌈")
-          
-          for i in {1..5}; do
-            random_msg=${commit_messages[$RANDOM % ${#commit_messages[@]}]}
-            git add TIMESTAMP.txt
-            git commit -m "$random_msg - $current_time"
-            current_time=$(date '+%Y-%m-%d %H:%M:%S') # Update timestamp for each commit
-          done
+          random_msg=${commit_messages[$RANDOM % ${#commit_messages[@]}]}
+
+          git add TIMESTAMP.txt
+          git commit -m "$random_msg - $current_time" || echo "No changes to commit."
 
       - name: GitHub Push
         uses: ad-m/github-push-action@v0.6.0
